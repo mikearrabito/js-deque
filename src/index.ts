@@ -1,3 +1,3 @@
-import { DequeueImpl as Dequeue } from "./Dequeue";
+import { DequeImpl as Deque } from "./Deque";
 
-export { Dequeue };
+export { Deque };

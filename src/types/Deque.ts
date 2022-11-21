@@ -1,4 +1,4 @@
-import { DequeueImpl } from "../Dequeue";
+import { DequeImpl } from "../Deque";
 
 export interface Queue<T = any> {
   getHead: () => T | null;
@@ -12,18 +12,18 @@ export interface Queue<T = any> {
   clear: () => void;
 }
 
-export interface Dequeue<T = any> extends Queue<T> {
+export interface Deque<T = any> extends Queue<T> {
   pushBack: (data: T) => void;
   popFront: () => T | null;
 }
 
-export interface DequeueNode<T = any> {
-  next: DequeueNode<T> | null;
-  prev: DequeueNode<T> | null;
+export interface DequeNode<T = any> {
+  next: DequeNode<T> | null;
+  prev: DequeNode<T> | null;
   data: T | null;
   clear: () => void;
 }
 
-export const isDequeue = <T = any>(val: unknown): val is Dequeue<T> => {
-  return val instanceof DequeueImpl;
+export const isDeque = <T = any>(val: unknown): val is Deque<T> => {
+  return val instanceof DequeImpl;
 };

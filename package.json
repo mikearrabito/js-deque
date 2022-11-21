@@ -1,7 +1,7 @@
 {
-  "name": "js-dequeue",
+  "name": "js-deque",
   "version": "0.0.1",
-  "description": "Dequeue implementation in Javascript",
+  "description": "Deque implementation in Javascript",
   "main": "./lib/index.js",
   "author": "Michael Arrabito",
   "license": "MIT",

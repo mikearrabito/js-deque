@@ -1,27 +1,18 @@
-import { Dequeue, DequeueNode } from "./types/Dequeue";
+import { Deque, DequeNode } from "./types/Deque";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
-export class DequeueImpl<T> implements Dequeue<T> {
-  private head: DequeueNode<T> | null = null;
-  private tail: DequeueNode<T> | null = null;
+export class DequeImpl<T> implements Deque<T> {
+  private head: DequeNode<T> | null = null;
+  private tail: DequeNode<T> | null = null;
 
   constructor(...initData: T[]) {
-    let prev: DequeueNode<T> | null = null;
-
-    for (let i = 0; i < initData.length; i++) {
-      const newNode = new DequeueNodeImpl(initData[i]);
-      newNode.prev = prev;
-      if (i === 0) {
-        this.head = newNode;
-      }
-      if (i > 0) {
-        // null check not needed since i=0 iter should set
-        (prev as DequeueNode<T>).next = newNode;
-      }
-      prev = newNode;
+    for (let i = initData.length - 1; i >= 0; i--) {
+      // enqueue in reverse order to preserve order
+      // new Deqeque(1,2,3) => [1, 2, 3]
+      // insert 3 first, then 2 in front, then 1 in front
+      // first element dequeued will be 3, which is end of init list
+      this.enqueue(initData[i]);
     }
-
-    this.tail = prev;
   }
 
   front() {
@@ -49,7 +40,7 @@ export class DequeueImpl<T> implements Dequeue<T> {
   }
 
   pushFront(data: T) {
-    const newNode = new DequeueNodeImpl(data);
+    const newNode = new DequeNodeImpl(data);
     newNode.next = this.head;
     if (this.head !== null) {
       this.head.prev = newNode;
@@ -61,7 +52,7 @@ export class DequeueImpl<T> implements Dequeue<T> {
   }
 
   pushBack(data: T) {
-    const newNode = new DequeueNodeImpl(data);
+    const newNode = new DequeNodeImpl(data);
     newNode.prev = this.tail;
     if (this.tail !== null) {
       this.tail.next = newNode;
@@ -127,11 +118,11 @@ export class DequeueImpl<T> implements Dequeue<T> {
   }
 
   toString() {
-    let queueStr = "Dequeue: [ ";
+    let queueStr = "Deque: [ ";
     let cur = this.head;
 
     if (cur === null) {
-      return "Dequeue: Dequeue is empty";
+      return "Deque: Deque is empty";
     }
 
     while (cur != null) {
@@ -152,9 +143,9 @@ export class DequeueImpl<T> implements Dequeue<T> {
   }
 }
 
-class DequeueNodeImpl<T> implements DequeueNode<T> {
-  private _prev: DequeueNode<T> | null = null;
-  private _next: DequeueNode<T> | null = null;
+class DequeNodeImpl<T> implements DequeNode<T> {
+  private _prev: DequeNode<T> | null = null;
+  private _next: DequeNode<T> | null = null;
   private _data: T | null;
 
   constructor(data: T) {
@@ -173,7 +164,7 @@ class DequeueNodeImpl<T> implements DequeueNode<T> {
     return this._prev;
   }
 
-  set prev(newPrev: DequeueNode<T> | null) {
+  set prev(newPrev: DequeNode<T> | null) {
     this._prev = newPrev;
   }
 
@@ -181,7 +172,7 @@ class DequeueNodeImpl<T> implements DequeueNode<T> {
     return this._next;
   }
 
-  set next(newNext: DequeueNode<T> | null) {
+  set next(newNext: DequeNode<T> | null) {
     this._next = newNext;
   }
 
