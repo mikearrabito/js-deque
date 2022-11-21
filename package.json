@@ -8,7 +8,7 @@
   "private": false,
   "scripts": {
     "build": "tsc",
-    "prepublish": "yarn test && yarn build",
+    "prepublishOnly": "yarn build && yarn test",
     "test": "mocha -r ts-node/register 'src/test/**/*.ts'"
   },
   "devDependencies": {
