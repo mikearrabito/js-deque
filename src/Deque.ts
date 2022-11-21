@@ -1,44 +1,79 @@
 import { Deque, DequeNode } from "./types/Deque";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
+/**
+ * Deque aka Double Ended Queue\
+ * Supports LIFO and FIFO operations to use as queue or stack\
+ * O(1) get, insert, and delete for front and back elements
+ */
 export class DequeImpl<T> implements Deque<T> {
   private head: DequeNode<T> | null = null;
   private tail: DequeNode<T> | null = null;
 
+  /**
+   * Initializes Deque with given variables
+   * new Deque(1,2,3) => Deque: [1, 2, 3]
+   *
+   * @param initData values to initialize Deque with
+   */
   constructor(...initData: T[]) {
     for (let i = initData.length - 1; i >= 0; i--) {
-      // enqueue in reverse order to preserve order
-      // new Deqeque(1,2,3) => [1, 2, 3]
-      // insert 3 first, then 2 in front, then 1 in front
-      // first element dequeued will be 3, which is end of init list
       this.enqueue(initData[i]);
     }
   }
 
+  /**
+   * Returns value at the front, or null if none exists
+   * @returns value at front
+   */
   front() {
     return this.getHead();
   }
 
+  /**
+   * Returns value at the back, or null if none exists
+   * @returns value at back
+   */
   back() {
     return this.getTail();
   }
 
+  /**
+   * Enqueues value by inserting at front
+   * @param data value to insert
+   */
   enqueue(data: T) {
     return this.pushFront(data);
   }
 
+  /**
+   * Dequeues value by removing from back
+   * @returns value at end or null if deque is empty
+   */
   dequeue() {
     return this.popBack();
   }
 
+  /**
+   * Returns value at front or null if deque is empty
+   * @returns value at front
+   */
   getHead() {
     return this.head?.data ?? null;
   }
 
+  /**
+   * Returns value at back
+   * @returns value at back or null if deque is empty
+   */
   getTail() {
     return this.tail?.data ?? null;
   }
 
+  /**
+   * Inserts value at front
+   * @param data value to insert
+   */
   pushFront(data: T) {
     const newNode = new DequeNodeImpl(data);
     newNode.next = this.head;
@@ -51,6 +86,10 @@ export class DequeImpl<T> implements Deque<T> {
     }
   }
 
+  /**
+   * Inserts value at back
+   * @param data value to insert
+   */
   pushBack(data: T) {
     const newNode = new DequeNodeImpl(data);
     newNode.prev = this.tail;
@@ -63,6 +102,10 @@ export class DequeImpl<T> implements Deque<T> {
     }
   }
 
+  /**
+   * Removes value from front, returns null if deque is empty
+   * @returns value removed
+   */
   popFront() {
     const head = this.head;
     if (head === null) {
@@ -84,6 +127,10 @@ export class DequeImpl<T> implements Deque<T> {
     return data;
   }
 
+  /**
+   * Removes value from end, returns null if deque is empty
+   * @returns value removed
+   */
   popBack() {
     const tail = this.tail;
     if (tail === null) {
@@ -105,6 +152,9 @@ export class DequeImpl<T> implements Deque<T> {
     return data;
   }
 
+  /**
+   * Removes all elements
+   */
   clear() {
     let cur = this.head;
     let prev = this.head;
