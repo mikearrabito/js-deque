@@ -1,4 +1,4 @@
-name: Push
+name: Build and Test
 on:
   push:
     branches:
@@ -9,4 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: yarn && yarn test
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test

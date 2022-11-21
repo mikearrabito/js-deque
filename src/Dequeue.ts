@@ -1,22 +1,22 @@
-import { Queue, QueueNode } from "./types/Queue";
+import { Dequeue, DequeueNode } from "./types/Queue";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
-class QueueImpl<T> implements Queue<T> {
-  private head: QueueNode<T> | null = null;
-  private tail: QueueNode<T> | null = null;
+export class DequeueImpl<T> implements Dequeue<T> {
+  private head: DequeueNode<T> | null = null;
+  private tail: DequeueNode<T> | null = null;
 
   constructor(...initData: T[]) {
-    let prev: QueueNode<T> | null = null;
+    let prev: DequeueNode<T> | null = null;
 
     for (let i = 0; i < initData.length; i++) {
-      const newNode = new QueueNodeImpl(initData[i]);
+      const newNode = new DequeueNodeImpl(initData[i]);
       newNode.prev = prev;
       if (i === 0) {
         this.head = newNode;
       }
       if (i > 0) {
         // null check not needed since i=0 iter should set
-        (prev as QueueNode<T>).next = newNode;
+        (prev as DequeueNode<T>).next = newNode;
       }
       prev = newNode;
     }
@@ -49,7 +49,7 @@ class QueueImpl<T> implements Queue<T> {
   }
 
   pushFront(data: T) {
-    const newNode = new QueueNodeImpl(data);
+    const newNode = new DequeueNodeImpl(data);
     newNode.next = this.head;
     if (this.head !== null) {
       this.head.prev = newNode;
@@ -61,7 +61,7 @@ class QueueImpl<T> implements Queue<T> {
   }
 
   pushBack(data: T) {
-    const newNode = new QueueNodeImpl(data);
+    const newNode = new DequeueNodeImpl(data);
     newNode.prev = this.tail;
     if (this.tail !== null) {
       this.tail.next = newNode;
@@ -127,11 +127,11 @@ class QueueImpl<T> implements Queue<T> {
   }
 
   toString() {
-    let queueStr = "Queue: [ ";
+    let queueStr = "Dequeue: [ ";
     let cur = this.head;
 
     if (cur === null) {
-      return "Queue: Queue is empty";
+      return "Dequeue: Dequeue is empty";
     }
 
     while (cur != null) {
@@ -152,9 +152,9 @@ class QueueImpl<T> implements Queue<T> {
   }
 }
 
-class QueueNodeImpl<T> implements QueueNode<T> {
-  private _prev: QueueNode<T> | null = null;
-  private _next: QueueNode<T> | null = null;
+class DequeueNodeImpl<T> implements DequeueNode<T> {
+  private _prev: DequeueNode<T> | null = null;
+  private _next: DequeueNode<T> | null = null;
   private _data: T | null;
 
   constructor(data: T) {
@@ -173,7 +173,7 @@ class QueueNodeImpl<T> implements QueueNode<T> {
     return this._prev;
   }
 
-  set prev(newPrev: QueueNode<T> | null) {
+  set prev(newPrev: DequeueNode<T> | null) {
     this._prev = newPrev;
   }
 
@@ -181,7 +181,7 @@ class QueueNodeImpl<T> implements QueueNode<T> {
     return this._next;
   }
 
-  set next(newNext: QueueNode<T> | null) {
+  set next(newNext: DequeueNode<T> | null) {
     this._next = newNext;
   }
 
@@ -191,5 +191,3 @@ class QueueNodeImpl<T> implements QueueNode<T> {
     this._data = null;
   }
 }
-
-export default QueueImpl;

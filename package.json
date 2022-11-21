@@ -1,12 +1,13 @@
 {
-  "name": "js-queue",
-  "version": "1.0.0",
-  "description": "Queue implementation in Javascript",
-  "main": "index.js",
+  "name": "js-dequeue",
+  "version": "0.0.1",
+  "description": "Dequeue implementation in Javascript",
+  "main": "./lib/index.js",
   "author": "Michael Arrabito",
   "license": "MIT",
   "private": false,
   "scripts": {
+    "build": "tsc",
     "test": "mocha -r ts-node/register 'test/**/*.ts'"
   },
   "devDependencies": {

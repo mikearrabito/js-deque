@@ -1,9 +1,8 @@
 import { describe } from "mocha";
 import { expect } from "chai";
-import Queue from "../index";
-import { Queue as QueueType } from "../types/Queue";
+import { DequeueImpl as Dequeue } from "../Dequeue";
 
-let queue: QueueType<number> | null;
+let queue: Dequeue<number> | null;
 
 beforeEach(() => {
   queue = null;
@@ -13,16 +12,16 @@ const genRandomNumbers = () => {
   return Array.from({ length: 10 }, () => Math.floor(Math.random() * 1000));
 };
 
-describe("Queue Tests", () => {
-  it("should initialize an empty queue", () => {
-    queue = new Queue();
+describe("Dequeue Tests", () => {
+  it("should initialize an empty dequeue", () => {
+    queue = new Dequeue();
     expect(queue).to.not.be.null;
   });
   it("should initialize queue with list of elements", () => {
-    queue = new Queue(...genRandomNumbers());
+    queue = new Dequeue(...genRandomNumbers());
   });
   it("should enqueue and dequeue in correct order", () => {
-    queue = new Queue();
+    queue = new Dequeue();
     const randomNums = genRandomNumbers();
     for (const num of randomNums) {
       queue.enqueue(num);
@@ -35,31 +34,31 @@ describe("Queue Tests", () => {
   });
   it("should pop correct value from front", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     expect(queue.popFront()).to.equal(randomNums[0]);
   });
   it("should pop correct value from back", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     expect(queue.popBack()).to.equal(randomNums[randomNums.length - 1]);
   });
   it("should push value to front", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     const randomNum = Math.random();
     queue.pushFront(randomNum);
     expect(queue.front()).to.equal(randomNum);
   });
   it("should push value to back", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     const randomNum = Math.random();
     queue.pushBack(randomNum);
     expect(queue.back()).to.equal(randomNum);
   });
   it("should push value to front and pop from front correctly", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     const randomNum = Math.random();
     queue.pushFront(randomNum);
     expect(queue.popFront()).to.equal(randomNum);
@@ -67,14 +66,14 @@ describe("Queue Tests", () => {
   });
   it("should push value to back and pop from back correctly", () => {
     const randomNums = genRandomNumbers();
-    queue = new Queue(...randomNums);
+    queue = new Dequeue(...randomNums);
     const randomNum = Math.random();
     queue.pushBack(randomNum);
     expect(queue.popBack()).to.equal(randomNum);
     expect(queue.back()).to.equal(randomNums[randomNums.length - 1]);
   });
   it("should clear queue", () => {
-    queue = new Queue(...genRandomNumbers());
+    queue = new Dequeue(...genRandomNumbers());
     queue.clear();
     expect(queue.front()).to.be.null;
     expect(queue.back()).to.be.null;
@@ -82,7 +81,7 @@ describe("Queue Tests", () => {
     expect(queue.popBack()).to.be.null;
   });
   it("should allow insertion after clearing", () => {
-    queue = new Queue(...genRandomNumbers());
+    queue = new Dequeue(...genRandomNumbers());
     queue.clear();
     expect(queue.front()).to.be.null;
     expect(queue.back()).to.be.null;
@@ -102,7 +101,7 @@ describe("Queue Tests", () => {
   it("should update pointers correctly for queue of size 1", () => {
     const initNums = genRandomNumbers().slice(0, 2);
     // init with 2 values
-    queue = new Queue(...initNums);
+    queue = new Dequeue(...initNums);
 
     expect(queue.front()).to.equal(initNums[0]);
     expect(queue.back()).to.equal(initNums[1]);
@@ -119,7 +118,7 @@ describe("Queue Tests", () => {
     expect(queue.back()).to.equal(randomNum);
   });
   it("should print toString correctly", () => {
-    queue = new Queue();
+    queue = new Dequeue();
     expect(queue.toString()).to.contain("empty");
     queue.enqueue(1);
     queue.enqueue(2);
