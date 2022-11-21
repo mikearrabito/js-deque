@@ -6,7 +6,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "exactOptionalPropertyTypes": true,
-    "strictPropertyInitialization": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
