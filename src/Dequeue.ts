@@ -1,4 +1,4 @@
-import { Dequeue, DequeueNode } from "./types/Queue";
+import { Dequeue, DequeueNode } from "./types/Dequeue";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
 export class DequeueImpl<T> implements Dequeue<T> {
