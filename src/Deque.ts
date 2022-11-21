@@ -15,6 +15,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Initializes Deque with given variables
+   *
    * @example
    * ```ts
    * let deque = new Deque(1,2,3);
@@ -40,6 +41,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Returns value at the front, or undefined if none exists
+   *
    * @returns value at front
    */
   front() {
@@ -48,6 +50,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Returns value at the back, or undefined if none exists
+   *
    * @returns value at back
    */
   back() {
@@ -56,6 +59,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Enqueues value by inserting at front
+   *
    * @param data value to insert
    */
   enqueue(data: T) {
@@ -64,6 +68,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * dequeues value by removing from back
+   *
    * @returns value at end or undefined if deque is empty
    */
   dequeue() {
@@ -72,6 +77,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Inserts value at front
+   *
    * @param data value to insert
    * @returns size after insertion
    */
@@ -91,6 +97,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Inserts value at back
+   *
    * @param data value to insert
    * @returns size after insertion
    */
@@ -109,7 +116,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes value from front, returns undefined if deque is empty
+   * Removes value from front, returns undefined if empty
+   *
    * @returns value removed
    */
   popFront() {
@@ -135,7 +143,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes value from end, returns undefined if deque is empty
+   * Removes value from end, returns undefined if empty
+   *
    * @returns value removed
    */
   popBack() {
@@ -210,7 +219,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Finds and returns value at given index of the deque
+   * Finds and returns value at given index
+   *
    * @param index of item to retrieve
    * @returns item at index given, or undefined if invalid index given
    */
@@ -251,7 +261,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes first occurance of a value in the deque
+   * Removes first occurance of a value
+   *
    * @param value value to remove
    * @returns value removed, or undefined if value not found
    */
@@ -277,7 +288,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Counts number of deque elements that equal value given
+   * Counts number of elements that equal to the value given
+   *
    * @param value value to search for
    * @returns number of occurances of value in the deque
    */
@@ -292,19 +304,20 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Searches deque for a value and returns the first found index in the deque, or -1 if not found
+   * Searches for a value and returns the first found index, or -1 if not found
+   *
    * @param value value to search for
    * @returns index of value in the deque or -1 if not found
    */
   indexOf(value: T): number {
-    const { index } = this.getNodeByValue(value);
-    return index;
+    return this.getNodeByValue(value).index;
   }
 
   /**
    * Determines if given value exists
+   *
    * @param val value to search for
-   * @returns true if value exists in the deque
+   * @returns true if value exists
    */
   has(val: T) {
     return this.indexOf(val) > -1;
@@ -312,7 +325,8 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Returns a representation of the deque as an array
-   * @returns deque as an array
+   *
+   * @returns array of values in order maintained in deque
    */
   toArray() {
     return [...this.getNodes()].map(node => cloneDeep(node.data)) as T[];
@@ -339,6 +353,7 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Creates a copy of the deque maintaining order of values, creates a deep copy of objects
+   *
    * @returns a new instance with copied values
    */
   copy() {
