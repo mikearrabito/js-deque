@@ -212,6 +212,14 @@ describe("Deque Tests", () => {
 
     for (let i = 0; i < randomNums.length; i++) {
       expect(queue.indexOf(randomNums[i])).to.equal(i);
+      expect(queue.has(randomNums[i])).to.be.true;
     }
+  });
+  it("should not find value not in deque", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+
+    expect(queue.indexOf(NaN)).to.equal(-1);
+    expect(queue.has(NaN)).to.be.false;
   });
 });
