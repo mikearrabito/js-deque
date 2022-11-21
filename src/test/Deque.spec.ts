@@ -2,216 +2,359 @@ import { describe } from "mocha";
 import { expect } from "chai";
 import { DequeImpl as Deque } from "../Deque";
 
-let queue: Deque<number> | null;
+let deque: Deque<number> | null;
 
 beforeEach(() => {
-  queue = null;
+  deque = null;
 });
 
 const genRandomNumbers = () => {
   return Array.from({ length: 10 }, () => Math.floor(Math.random() * 1000));
 };
 
-describe("Deque Tests", () => {
+const shuffle = (array: unknown[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+};
+
+describe("Deque Tests", function () {
   it("should initialize an empty Deque", () => {
-    queue = new Deque();
-    expect(queue).to.not.be.null;
+    deque = new Deque();
+    expect(deque).to.not.be.null;
   });
-  it("should initialize queue with list of elements", () => {
-    queue = new Deque(...genRandomNumbers());
+  it("should initialize deque with list of elements", () => {
+    deque = new Deque(...genRandomNumbers());
   });
-  it("should enqueue and Deque in correct order", () => {
-    queue = new Deque();
+  it("enqueues and dequeues in correct order", () => {
+    deque = new Deque();
     const randomNums = genRandomNumbers();
     for (const num of randomNums) {
-      queue.enqueue(num);
+      deque.enqueue(num);
     }
     for (let i = 0; i < randomNums.length; i++) {
-      expect(queue.dequeue()).to.equal(randomNums[i]);
+      expect(deque.dequeue()).to.equal(randomNums[i]);
     }
-    expect(queue.front()).to.be.null;
-    expect(queue.back()).to.be.null;
+    expect(deque.front()).to.be.undefined;
+    expect(deque.back()).to.be.undefined;
   });
-  it("should pop correct value from front", () => {
+  it("pops correctly value from front", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
-    expect(queue.popFront()).to.equal(randomNums[0]);
+    deque = new Deque(...randomNums);
+    expect(deque.popFront()).to.equal(randomNums[0]);
+    deque = new Deque();
+    deque.pushFront(1);
+    expect(deque.popFront()).to.equal(1);
   });
-  it("should pop correct value from back", () => {
+  it("pops correctly value from back", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
-    expect(queue.popBack()).to.equal(randomNums[randomNums.length - 1]);
+    deque = new Deque(...randomNums);
+    expect(deque.popBack()).to.equal(randomNums[randomNums.length - 1]);
+    deque = new Deque();
+    deque.pushBack(1);
+    expect(deque.popBack()).to.equal(1);
   });
-  it("should push value to front", () => {
+  it("pushes value to front", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
     const randomNum = Math.random();
-    queue.pushFront(randomNum);
-    expect(queue.front()).to.equal(randomNum);
+    deque.pushFront(randomNum);
+    expect(deque.front()).to.equal(randomNum);
   });
-  it("should push value to back", () => {
+  it("pushes value to back", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
     const randomNum = Math.random();
-    queue.pushBack(randomNum);
-    expect(queue.back()).to.equal(randomNum);
+    deque.pushBack(randomNum);
+    expect(deque.back()).to.equal(randomNum);
   });
-  it("should push value to front and pop from front correctly", () => {
+  it("pushes value to front and pops from front correctly", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
     const randomNum = Math.random();
-    queue.pushFront(randomNum);
-    expect(queue.popFront()).to.equal(randomNum);
-    expect(queue.front()).to.equal(randomNums[0]);
+    deque.pushFront(randomNum);
+    expect(deque.popFront()).to.equal(randomNum);
+    expect(deque.front()).to.equal(randomNums[0]);
   });
-  it("should push value to back and pop from back correctly", () => {
+  it("pushes value to back and pops from back correctly", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
     const randomNum = Math.random();
-    queue.pushBack(randomNum);
-    expect(queue.popBack()).to.equal(randomNum);
-    expect(queue.back()).to.equal(randomNums[randomNums.length - 1]);
+    deque.pushBack(randomNum);
+    expect(deque.popBack()).to.equal(randomNum);
+    expect(deque.back()).to.equal(randomNums[randomNums.length - 1]);
   });
-  it("should clear queue", () => {
-    queue = new Deque(...genRandomNumbers());
-    queue.clear();
-    expect(queue.front()).to.be.null;
-    expect(queue.back()).to.be.null;
-    expect(queue.popFront()).to.be.null;
-    expect(queue.popBack()).to.be.null;
+  it("clears deque", () => {
+    deque = new Deque(...genRandomNumbers());
+    deque.clear();
+    expect(deque.front()).to.be.undefined;
+    expect(deque.back()).to.be.undefined;
+    expect(deque.popFront()).to.be.undefined;
+    expect(deque.popBack()).to.be.undefined;
   });
-  it("should allow insertion after clearing", () => {
-    queue = new Deque(...genRandomNumbers());
-    queue.clear();
-    expect(queue.front()).to.be.null;
-    expect(queue.back()).to.be.null;
-    expect(queue.popFront()).to.be.null;
-    expect(queue.popBack()).to.be.null;
+  it("allows insertion after clearing", () => {
+    deque = new Deque(...genRandomNumbers());
+    deque.clear();
+    expect(deque.front()).to.be.undefined;
+    expect(deque.back()).to.be.undefined;
+    expect(deque.popFront()).to.be.undefined;
+    expect(deque.popBack()).to.be.undefined;
 
     const randomNum = Math.random();
-    queue.pushBack(randomNum);
-    expect(queue.front()).to.equal(randomNum);
-    expect(queue.back()).to.equal(randomNum);
+    deque.pushBack(randomNum);
+    expect(deque.front()).to.equal(randomNum);
+    expect(deque.back()).to.equal(randomNum);
 
     const secondRandomNum = Math.random();
-    queue.pushBack(secondRandomNum);
-    expect(queue.front()).to.equal(randomNum);
-    expect(queue.back()).to.equal(secondRandomNum);
+    deque.pushBack(secondRandomNum);
+    expect(deque.front()).to.equal(randomNum);
+    expect(deque.back()).to.equal(secondRandomNum);
   });
-  it("should update pointers correctly for queue of size 1", () => {
+  it("updates pointers correctly for deque of size 1", () => {
     const initNums = genRandomNumbers().slice(0, 2);
     // init with 2 values
-    queue = new Deque(...initNums);
+    deque = new Deque(...initNums);
 
-    expect(queue.front()).to.equal(initNums[0]);
-    expect(queue.back()).to.equal(initNums[1]);
+    expect(deque.front()).to.equal(initNums[0]);
+    expect(deque.back()).to.equal(initNums[1]);
 
-    expect(queue.popBack()).to.equal(initNums[1]);
+    expect(deque.popBack()).to.equal(initNums[1]);
 
-    // queue size 1, head and tail should be same
-    expect(queue.front()).to.equal(initNums[0]);
-    expect(queue.back()).to.equal(initNums[0]);
+    // deque size 1, head and tail should be same
+    expect(deque.front()).to.equal(initNums[0]);
+    expect(deque.back()).to.equal(initNums[0]);
 
     const randomNum = Math.random();
-    queue.pushBack(randomNum);
-    expect(queue.front()).to.equal(initNums[0]);
-    expect(queue.back()).to.equal(randomNum);
+    deque.pushBack(randomNum);
+    expect(deque.front()).to.equal(initNums[0]);
+    expect(deque.back()).to.equal(randomNum);
   });
-  it("should print toString correctly", () => {
-    queue = new Deque();
-    expect(queue.toString()).to.contain("empty");
-    queue.enqueue(1);
-    queue.enqueue(2);
-    queue.enqueue(3);
-    expect(queue.toString())
+  it("prints toString correctly", () => {
+    deque = new Deque();
+    expect(deque.toString()).to.contain("empty");
+    deque.enqueue(1);
+    deque.enqueue(2);
+    deque.enqueue(3);
+    expect(deque.toString())
       .to.contain("1")
       .and.to.contain("2")
       .and.to.contain("3");
   });
-  it("should determine if value is in deque", () => {
+  it("determines if value is in deque", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
     for (const num of randomNums) {
-      expect(queue.has(num)).to.be.true;
+      expect(deque.has(num)).to.be.true;
     }
+    expect(deque.has(-1)).to.be.false; // randomnums are always positive
   });
-  it("should convert to array correctly", () => {
+  it("converts to array", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
-    const queueAsArray = queue.toArray();
+    deque = new Deque(...randomNums);
+    const dequeAsArray = deque.toArray();
     for (let i = 0; i < randomNums.length; i++) {
-      expect(queueAsArray[i]).to.equal(randomNums[i]);
+      expect(dequeAsArray[i]).to.equal(randomNums[i]);
     }
-    queue.clear();
-    const emptyQueueArr = queue.toArray();
-    expect(emptyQueueArr.length).to.equal(0);
+    deque.clear();
+    const emptydequeArr = deque.toArray();
+    expect(emptydequeArr.length).to.equal(0);
   });
-  it("should set size correctly", () => {
-    queue = new Deque();
-    expect(queue.size).to.equal(0);
+  it("sets size correctly", () => {
+    deque = new Deque();
+    expect(deque.size).to.equal(0);
     const randomNums = genRandomNumbers();
     for (const num of randomNums) {
-      queue.enqueue(num);
+      deque.enqueue(num);
     }
-    expect(queue.size).to.equal(randomNums.length);
-    queue.clear();
-    expect(queue.size).to.equal(0);
+    expect(deque.size).to.equal(randomNums.length);
+    deque.clear();
+    expect(deque.size).to.equal(0);
   });
-  it("should reverse correctly", () => {
+  it("reverses", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
 
     const randomNumsReversed = randomNums.slice().reverse();
-    queue.reverse();
+    deque.reverse();
 
-    const queueAsArray = queue.toArray();
+    const dequeAsArray = deque.toArray();
     for (let i = 0; i < randomNums.length; i++) {
-      expect(queueAsArray[i]).to.equal(randomNumsReversed[i]);
+      expect(dequeAsArray[i]).to.equal(randomNumsReversed[i]);
     }
 
     // insert at front and back to ensure head and tail ptrs correct
-    queue.enqueue(1);
-    expect(queue.size).to.equal(randomNums.length + 1);
-    expect(queue.popFront()).to.equal(1);
+    deque.enqueue(1);
+    expect(deque.size).to.equal(randomNums.length + 1);
+    expect(deque.popFront()).to.equal(1);
 
-    queue.pushBack(1);
-    expect(queue.size).to.equal(randomNums.length + 1);
-    expect(queue.popBack()).to.equal(1);
+    deque.pushBack(1);
+    expect(deque.size).to.equal(randomNums.length + 1);
+    expect(deque.popBack()).to.equal(1);
 
-    expect(queue.back()).to.equal(
+    expect(deque.back()).to.equal(
       randomNumsReversed[randomNumsReversed.length - 1]
     );
-    expect(queue.front()).to.equal(randomNumsReversed[0]);
+    expect(deque.front()).to.equal(randomNumsReversed[0]);
 
     // reversing back to original
-    queue.reverse();
-    const queueArrAfterSecondReverse = queue.toArray();
-    for (let i = 0; i < queue.size; i++) {
-      expect(queueArrAfterSecondReverse[i]).to.equal(randomNums[i]);
+    deque.reverse();
+    const dequeArrAfterSecondReverse = deque.toArray();
+    for (let i = 0; i < deque.size; i++) {
+      expect(dequeArrAfterSecondReverse[i]).to.equal(randomNums[i]);
     }
   });
-  it("should copy correctly", () => {
+  it("copies", () => {
     const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
+    deque = new Deque(...randomNums);
 
-    const copy = queue.copy();
-    expect(copy.size).to.equal(queue.size);
+    const copy = deque.copy();
+    expect(copy.size).to.equal(deque.size);
 
     const copyArr = copy.toArray();
-    const qArr = queue.toArray();
-    for (let i = 0; i < queue.size; i++) {
+    const qArr = deque.toArray();
+    for (let i = 0; i < deque.size; i++) {
       expect(copyArr[i]).to.equal(qArr[i]);
     }
 
     copy.dequeue();
-    expect(copy.size).to.not.equal(queue.size);
+    expect(copy.size).to.not.equal(deque.size);
   });
-  it("should find indexOf correctly", () => {
-    const randomNums = genRandomNumbers();
-    queue = new Deque(...randomNums);
-
-    for (let i = 0; i < randomNums.length; i++) {
-      expect(queue.indexOf(randomNums[i])).to.equal(i);
+  it("finds indexOf correctly", () => {
+    const nums = [0, 1, 2, 3, 4];
+    deque = new Deque(...nums);
+    for (let i = 0; i < 5; i++) {
+      expect(deque.indexOf(nums[i])).to.equal(i);
     }
+  });
+  describe("Get", () => {
+    it("gets from given index", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      for (let i = 0; i < randomNums.length; i++) {
+        expect(deque.get(i)).to.equal(randomNums[i]);
+      }
+    });
+    it("returns undefined for invalid index", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      expect(deque.get(-1)).to.be.undefined;
+      expect(deque.get(randomNums.length)).to.be.undefined;
+    });
+  });
+
+  it("counts elements", () => {
+    const THREE_ZEROS = [0, 0, 0];
+    const FOUR_ONES = [1, 1, 1, 1];
+    const ONE_THREE = [3];
+    const FOUR_FIVES = [5, 5, 5, 5];
+    const nums = [...THREE_ZEROS, ...FOUR_ONES, ...ONE_THREE, ...FOUR_FIVES];
+    shuffle(nums);
+    deque = new Deque(...nums);
+    expect(deque.count(0)).to.equal(3);
+    expect(deque.count(1)).to.equal(4);
+    expect(deque.count(2)).to.equal(0);
+    expect(deque.count(3)).to.equal(1);
+    expect(deque.count(4)).to.equal(0);
+    expect(deque.count(5)).to.equal(4);
+  });
+  this.slow(1_000);
+  it("handles many elements", () => {
+    deque = new Deque();
+    const NUM_ELEMENTS = 1_000_000;
+    for (let i = 0; i < NUM_ELEMENTS; i++) {
+      deque.enqueue(Math.random());
+    }
+    expect(deque.size).to.equal(NUM_ELEMENTS);
+    for (let i = 0; i < NUM_ELEMENTS; i++) {
+      deque.dequeue();
+    }
+    expect(deque.size).to.equal(0);
+  });
+  describe("Insert", function () {
+    it("inserts at front", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      const INSERT_IDX = 0;
+      const NUM_INSERTED = Math.random();
+      expect(deque.insert(INSERT_IDX, NUM_INSERTED)).to.equal(
+        randomNums.length + 1
+      );
+      expect(deque.get(INSERT_IDX)).to.equal(NUM_INSERTED);
+      expect(deque.front()).to.equal(NUM_INSERTED);
+    });
+    it("inserts in middle", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      const INSERT_IDX = 3;
+      const NUM_INSERTED = Math.random();
+      expect(deque.insert(INSERT_IDX, NUM_INSERTED)).to.equal(
+        randomNums.length + 1
+      );
+      expect(deque.get(INSERT_IDX)).to.equal(NUM_INSERTED);
+    });
+    it("inserts at back", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      const INSERT_IDX = randomNums.length;
+      const NUM_INSERTED = Math.random();
+      expect(deque.insert(INSERT_IDX, NUM_INSERTED)).to.equal(
+        randomNums.length + 1
+      );
+      expect(deque.get(INSERT_IDX)).to.equal(NUM_INSERTED);
+      expect(deque.back()).to.equal(NUM_INSERTED);
+    });
+    it("inserts into empty deque", () => {
+      deque = new Deque();
+      const INSERT_IDX = 0;
+      const NUM_INSERTED = Math.random();
+      expect(deque.insert(INSERT_IDX, NUM_INSERTED)).to.equal(1);
+      expect(deque.get(INSERT_IDX)).to.equal(NUM_INSERTED);
+    });
+    it("inserts with out of bounds indices", () => {
+      const randomNums = genRandomNumbers();
+      deque = new Deque(...randomNums);
+      const OOB_FRONT_IDX = -1;
+      const OOB_BACK_IDX = randomNums.length + 100;
+      const NUM_INSERTED = Math.random();
+      expect(deque.insert(OOB_FRONT_IDX, NUM_INSERTED)).to.equal(
+        randomNums.length + 1
+      );
+      expect(deque.popFront()).to.equal(NUM_INSERTED);
+      expect(deque.insert(OOB_BACK_IDX, NUM_INSERTED)).to.equal(
+        randomNums.length + 1
+      );
+      expect(deque.popBack()).to.equal(NUM_INSERTED);
+    });
+  });
+  describe("Removal", function () {
+    it("removes from front", () => {
+      const nums = [0, 1, 2, 3, 4, 5];
+      deque = new Deque(...nums);
+      expect(deque.remove(0)).to.equal(0);
+      expect(deque.size).to.equal(nums.length - 1);
+    });
+    it("removes from middle", () => {
+      const nums = [0, 1, 2, 3, 4, 5];
+      deque = new Deque(...nums);
+      expect(deque.remove(3)).to.equal(3);
+      expect(deque.size).to.equal(nums.length - 1);
+    });
+    it("removes from back", () => {
+      const nums = [0, 1, 2, 3, 4, 5];
+      deque = new Deque(...nums);
+      expect(deque.remove(5)).to.equal(5);
+      expect(deque.size).to.equal(nums.length - 1);
+    });
+    it("removes multiple values", () => {
+      const nums = [0, 1, 2, 3, 4, 5];
+      deque = new Deque(...nums);
+      expect(deque.remove(3)).to.equal(3);
+      expect(deque.size).to.equal(nums.length - 1);
+      expect(deque.remove(0)).to.equal(0);
+      expect(deque.size).to.equal(nums.length - 2);
+      expect(deque.remove(4)).to.equal(4);
+      expect(deque.size).to.equal(nums.length - 3);
+    });
   });
 });

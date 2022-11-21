@@ -22,7 +22,7 @@ export class DequeImpl<T> implements Deque<T> {
    * deque = new Deque<number>();
    * deque.toString(); // Deque: Deque is empty
    * ```
-   * @param initData values to initialize Deque with
+   * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
     for (let i = initData.length - 1; i >= 0; i--) {
@@ -32,26 +32,26 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Number of elements in the Deque
+   * Number of elements in the deque
    */
   get size() {
     return this._size;
   }
 
   /**
-   * Returns value at the front, or null if none exists
+   * Returns value at the front, or undefined if none exists
    * @returns value at front
    */
   front() {
-    return this.head?.data ?? null;
+    return this.head?.data ?? undefined;
   }
 
   /**
-   * Returns value at the back, or null if none exists
+   * Returns value at the back, or undefined if none exists
    * @returns value at back
    */
   back() {
-    return this.tail?.data ?? null;
+    return this.tail?.data ?? undefined;
   }
 
   /**
@@ -63,8 +63,8 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Dequeues value by removing from back
-   * @returns value at end or null if deque is empty
+   * dequeues value by removing from back
+   * @returns value at end or undefined if deque is empty
    */
   dequeue() {
     return this.popBack();
@@ -86,7 +86,7 @@ export class DequeImpl<T> implements Deque<T> {
       this.tail = newNode;
     }
     this._size++;
-    return this.size;
+    return this._size;
   }
 
   /**
@@ -105,17 +105,17 @@ export class DequeImpl<T> implements Deque<T> {
       this.head = newNode;
     }
     this._size++;
-    return this.size;
+    return this._size;
   }
 
   /**
-   * Removes value from front, returns null if deque is empty
+   * Removes value from front, returns undefined if deque is empty
    * @returns value removed
    */
   popFront() {
     const head = this.head;
     if (head === null) {
-      return null;
+      return undefined;
     }
 
     const nextNode = head.next;
@@ -135,13 +135,13 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes value from end, returns null if deque is empty
+   * Removes value from end, returns undefined if deque is empty
    * @returns value removed
    */
   popBack() {
     const tail = this.tail;
     if (tail === null) {
-      return null;
+      return undefined;
     }
 
     const prevNode = tail.prev;
@@ -176,30 +176,150 @@ export class DequeImpl<T> implements Deque<T> {
     this._size = 0;
   }
 
-  /**
-   * Determines if given value exists
-   * @param val value to search for
-   * @returns true if value exists in deque
-   */
-  has(val: T) {
-    for (const node of this.getNodes()) {
-      if (isEqual(node.data, val)) {
-        return true;
-      }
+  private getNodeAtIndex(index: number): DequeNode<T> | undefined {
+    if (index >= this.size || index < 0) {
+      return undefined;
     }
-    return false;
+    let curIdx = 0;
+    let nodeFound: DequeNode<T> | undefined;
+    for (const node of this.getNodes()) {
+      if (curIdx === index) {
+        nodeFound = node;
+        break;
+      }
+      curIdx++;
+    }
+    return nodeFound;
+  }
+
+  private getNodeByValue(value: T): {
+    node: DequeNode<T> | undefined;
+    index: number;
+  } {
+    let index = 0;
+    for (const node of this.getNodes()) {
+      if (isEqual(node.data, value)) {
+        return { node, index };
+      }
+      index++;
+    }
+    return {
+      node: undefined,
+      index: -1,
+    };
   }
 
   /**
-   * Returns a representation of the Deque as an array
-   * @returns Deque as an array
+   * Finds and returns value at given index of the deque
+   * @param index of item to retrieve
+   * @returns item at index given, or undefined if invalid index given
+   */
+  get(index: number): T | undefined {
+    return this.getNodeAtIndex(index)?.data;
+  }
+
+  /**
+   * Inserts value at given index, if an out of bounds index is given then inserts
+   * at front or back, depending on which direction the index is out of bounds
+   *
+   * @param index insertion index
+   * @param value value to insert
+   * @returns new size of the deque
+   */
+  insert(index: number, value: T): number {
+    if (index <= 0) {
+      return this.pushFront(value);
+    }
+    if (index >= this._size) {
+      return this.pushBack(value);
+    }
+
+    // casting since we should always find node in middle of list, and
+    // a node in the middle of the list will always have prev !== null
+    const node = this.getNodeAtIndex(index) as DequeNode<T>;
+    let prev = node.prev as DequeNode<T>;
+
+    const newNode = new DequeNodeImpl(value);
+
+    prev.next = newNode;
+    node.prev = newNode;
+    newNode.prev = prev;
+    newNode.next = node;
+
+    this._size++;
+    return this._size;
+  }
+
+  /**
+   * Removes first occurance of a value in the deque
+   * @param value value to remove
+   * @returns value removed, or undefined if value not found
+   */
+  remove(value: T) {
+    const { node } = this.getNodeByValue(value);
+    let valRemoved: T | undefined;
+    if (node !== undefined) {
+      if (node === this.head) {
+        valRemoved = this.popFront();
+      } else if (node === this.tail) {
+        valRemoved = this.popBack();
+      } else {
+        valRemoved = node.data;
+        let next = node.next;
+        let prev = node.prev;
+        node.clear();
+        (prev as DequeNode<T>).next = next;
+        (next as DequeNode<T>).prev = prev;
+        this._size--;
+      }
+    }
+    return valRemoved;
+  }
+
+  /**
+   * Counts number of deque elements that equal value given
+   * @param value value to search for
+   * @returns number of occurances of value in the deque
+   */
+  count(value: T): number {
+    let count = 0;
+    for (const node of this.getNodes()) {
+      if (isEqual(node.data, value)) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Searches deque for a value and returns the first found index in the deque, or -1 if not found
+   * @param value value to search for
+   * @returns index of value in the deque or -1 if not found
+   */
+  indexOf(value: T): number {
+    const { index } = this.getNodeByValue(value);
+    return index;
+  }
+
+  /**
+   * Determines if given value exists
+   * @param val value to search for
+   * @returns true if value exists in the deque
+   */
+  has(val: T) {
+    return this.indexOf(val) > -1;
+  }
+
+  /**
+   * Returns a representation of the deque as an array
+   * @returns deque as an array
    */
   toArray() {
     return [...this.getNodes()].map(node => cloneDeep(node.data)) as T[];
   }
 
   /**
-   * Reverses the Deque in-place
+   * Reverses the deque in-place
    */
   reverse() {
     const oldHead = this.head;
@@ -218,27 +338,11 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Creates a copy of the Deque maintaining order of values, creates a deep copy of objects
+   * Creates a copy of the deque maintaining order of values, creates a deep copy of objects
    * @returns a new instance with copied values
    */
   copy() {
     return new DequeImpl(...this.toArray().map(v => cloneDeep(v)));
-  }
-
-  /**
-   * Searches Deque for a value and returns index in queue, or -1 if not found
-   * @param value value to search for
-   * @returns index of value in queue or -1 if not found
-   */
-  indexOf(value: T): number {
-    let index = 0;
-    for (const node of this.getNodes()) {
-      if (isEqual(node.data, value)) {
-        return index;
-      }
-      index++;
-    }
-    return -1;
   }
 
   private *getNodes(): Generator<DequeNode<T>> {
@@ -278,7 +382,7 @@ export class DequeImpl<T> implements Deque<T> {
 class DequeNodeImpl<T> implements DequeNode<T> {
   private _prev: DequeNode<T> | null = null;
   private _next: DequeNode<T> | null = null;
-  private _data: T | null;
+  private _data: T | undefined;
 
   constructor(data: T) {
     this._data = data;
@@ -288,7 +392,7 @@ class DequeNodeImpl<T> implements DequeNode<T> {
     return this._data;
   }
 
-  set data(newData: T | null) {
+  set data(newData: T | undefined) {
     this._data = newData;
   }
 
@@ -311,6 +415,6 @@ class DequeNodeImpl<T> implements DequeNode<T> {
   clear() {
     this._prev = null;
     this._next = null;
-    this._data = null;
+    this._data = undefined;
   }
 }
