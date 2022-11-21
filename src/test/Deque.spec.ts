@@ -128,4 +128,90 @@ describe("Deque Tests", () => {
       .and.to.contain("2")
       .and.to.contain("3");
   });
+  it("should determine if value is in deque", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+    for (const num of randomNums) {
+      expect(queue.has(num)).to.be.true;
+    }
+  });
+  it("should convert to array correctly", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+    const queueAsArray = queue.toArray();
+    for (let i = 0; i < randomNums.length; i++) {
+      expect(queueAsArray[i]).to.equal(randomNums[i]);
+    }
+    queue.clear();
+    const emptyQueueArr = queue.toArray();
+    expect(emptyQueueArr.length).to.equal(0);
+  });
+  it("should set size correctly", () => {
+    queue = new Deque();
+    expect(queue.size).to.equal(0);
+    const randomNums = genRandomNumbers();
+    for (const num of randomNums) {
+      queue.enqueue(num);
+    }
+    expect(queue.size).to.equal(randomNums.length);
+    queue.clear();
+    expect(queue.size).to.equal(0);
+  });
+  it("should reverse correctly", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+
+    const randomNumsReversed = randomNums.slice().reverse();
+    queue.reverse();
+
+    const queueAsArray = queue.toArray();
+    for (let i = 0; i < randomNums.length; i++) {
+      expect(queueAsArray[i]).to.equal(randomNumsReversed[i]);
+    }
+
+    // insert at front and back to ensure head and tail ptrs correct
+    queue.enqueue(1);
+    expect(queue.size).to.equal(randomNums.length + 1);
+    expect(queue.popFront()).to.equal(1);
+
+    queue.pushBack(1);
+    expect(queue.size).to.equal(randomNums.length + 1);
+    expect(queue.popBack()).to.equal(1);
+
+    expect(queue.back()).to.equal(
+      randomNumsReversed[randomNumsReversed.length - 1]
+    );
+    expect(queue.front()).to.equal(randomNumsReversed[0]);
+
+    // reversing back to original
+    queue.reverse();
+    const queueArrAfterSecondReverse = queue.toArray();
+    for (let i = 0; i < queue.size; i++) {
+      expect(queueArrAfterSecondReverse[i]).to.equal(randomNums[i]);
+    }
+  });
+  it("should copy correctly", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+
+    const copy = queue.copy();
+    expect(copy.size).to.equal(queue.size);
+
+    const copyArr = copy.toArray();
+    const qArr = queue.toArray();
+    for (let i = 0; i < queue.size; i++) {
+      expect(copyArr[i]).to.equal(qArr[i]);
+    }
+
+    copy.dequeue();
+    expect(copy.size).to.not.equal(queue.size);
+  });
+  it("should find indexOf correctly", () => {
+    const randomNums = genRandomNumbers();
+    queue = new Deque(...randomNums);
+
+    for (let i = 0; i < randomNums.length; i++) {
+      expect(queue.indexOf(randomNums[i])).to.equal(i);
+    }
+  });
 });

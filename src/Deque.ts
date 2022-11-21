@@ -1,4 +1,6 @@
 import { Deque, DequeNode } from "./types/Deque";
+import cloneDeep from "lodash/cloneDeep";
+import isEqual from "lodash/isEqual";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
 /**
@@ -9,6 +11,7 @@ const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 export class DequeImpl<T> implements Deque<T> {
   private head: DequeNode<T> | null = null;
   private tail: DequeNode<T> | null = null;
+  private _size: number = 0;
 
   /**
    * Initializes Deque with given variables
@@ -25,6 +28,14 @@ export class DequeImpl<T> implements Deque<T> {
     for (let i = initData.length - 1; i >= 0; i--) {
       this.enqueue(initData[i]);
     }
+    this._size = initData.length;
+  }
+
+  /**
+   * Number of elements in the Deque
+   */
+  get size() {
+    return this._size;
   }
 
   /**
@@ -78,6 +89,7 @@ export class DequeImpl<T> implements Deque<T> {
   /**
    * Inserts value at front
    * @param data value to insert
+   * @returns size after insertion
    */
   pushFront(data: T) {
     const newNode = new DequeNodeImpl(data);
@@ -89,11 +101,14 @@ export class DequeImpl<T> implements Deque<T> {
     if (this.tail === null) {
       this.tail = newNode;
     }
+    this._size++;
+    return this.size;
   }
 
   /**
    * Inserts value at back
    * @param data value to insert
+   * @returns size after insertion
    */
   pushBack(data: T) {
     const newNode = new DequeNodeImpl(data);
@@ -105,6 +120,8 @@ export class DequeImpl<T> implements Deque<T> {
     if (this.head === null) {
       this.head = newNode;
     }
+    this._size++;
+    return this.size;
   }
 
   /**
@@ -129,6 +146,7 @@ export class DequeImpl<T> implements Deque<T> {
 
     const data = head.data;
     head.clear();
+    this._size--;
     return data;
   }
 
@@ -154,6 +172,7 @@ export class DequeImpl<T> implements Deque<T> {
 
     const data = tail.data;
     tail.clear();
+    this._size--;
     return data;
   }
 
@@ -170,6 +189,80 @@ export class DequeImpl<T> implements Deque<T> {
     }
     this.head = null;
     this.tail = null;
+    this._size = 0;
+  }
+
+  /**
+   * Determines if given value exists
+   * @param val value to search for
+   * @returns true if value exists in deque
+   */
+  has(val: T) {
+    for (const node of this.getNodes()) {
+      if (isEqual(node.data, val)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Returns a representation of the Deque as an array
+   * @returns Deque as an array
+   */
+  toArray() {
+    return [...this.getNodes()].map(node => node.data) as T[];
+  }
+
+  /**
+   * Reverses the Deque in-place
+   */
+  reverse() {
+    const oldHead = this.head;
+    let cur = this.head;
+    let prev: DequeNode<T> | null = null;
+    while (cur !== null) {
+      let next = cur.next;
+      cur.next = cur.prev;
+      cur.prev = next;
+      prev = cur;
+      cur = next;
+    }
+    this.head = prev;
+    this.tail = oldHead;
+    return this;
+  }
+
+  /**
+   * Creates a copy of the Deque maintaining order of values, creates a deep copy of objects
+   * @returns a new instance with copied values
+   */
+  copy() {
+    return new DequeImpl(...this.toArray().map(v => cloneDeep(v)));
+  }
+
+  /**
+   * Searches Deque for a value and returns index in queue, or -1 if not found
+   * @param value value to search for
+   * @returns index of value in queue or -1 if not found
+   */
+  indexOf(value: T): number {
+    let index = 0;
+    for (const node of this.getNodes()) {
+      if (isEqual(node.data, value)) {
+        return index;
+      }
+      index++;
+    }
+    return -1;
+  }
+
+  private *getNodes(): Generator<DequeNode<T>> {
+    let cur = this.head;
+    while (cur !== null) {
+      yield cur;
+      cur = cur.next;
+    }
   }
 
   toString() {

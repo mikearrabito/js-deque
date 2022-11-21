@@ -1,20 +1,25 @@
 import { DequeImpl } from "../Deque";
 
 export interface Queue<T = any> {
+  size: number;
   getHead: () => T | null;
   getTail: () => T | null;
   front: () => T | null;
   back: () => T | null;
-  pushFront: (data: T) => void;
+  pushFront: (data: T) => number;
   popBack: () => T | null;
-  enqueue: (data: T) => void;
+  enqueue: (data: T) => number;
   dequeue: () => T | null;
   clear: () => void;
+  indexOf: (value: T) => number;
 }
 
 export interface Deque<T = any> extends Queue<T> {
-  pushBack: (data: T) => void;
+  pushBack: (data: T) => number;
   popFront: () => T | null;
+  toArray: () => T[];
+  reverse: () => Deque<T>;
+  copy: () => Deque<T>;
 }
 
 export interface DequeNode<T = any> {
