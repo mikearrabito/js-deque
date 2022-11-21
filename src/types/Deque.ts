@@ -2,8 +2,6 @@ import { DequeImpl } from "../Deque";
 
 export interface Queue<T = any> {
   size: number;
-  getHead: () => T | null;
-  getTail: () => T | null;
   front: () => T | null;
   back: () => T | null;
   pushFront: (data: T) => number;

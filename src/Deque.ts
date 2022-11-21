@@ -43,7 +43,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns value at front
    */
   front() {
-    return this.getHead();
+    return this.head?.data ?? null;
   }
 
   /**
@@ -51,7 +51,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns value at back
    */
   back() {
-    return this.getTail();
+    return this.tail?.data ?? null;
   }
 
   /**
@@ -68,22 +68,6 @@ export class DequeImpl<T> implements Deque<T> {
    */
   dequeue() {
     return this.popBack();
-  }
-
-  /**
-   * Returns value at front or null if deque is empty
-   * @returns value at front
-   */
-  getHead() {
-    return this.head?.data ?? null;
-  }
-
-  /**
-   * Returns value at back
-   * @returns value at back or null if deque is empty
-   */
-  getTail() {
-    return this.tail?.data ?? null;
   }
 
   /**

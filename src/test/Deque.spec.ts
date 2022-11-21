@@ -29,8 +29,8 @@ describe("Deque Tests", () => {
     for (let i = 0; i < randomNums.length; i++) {
       expect(queue.dequeue()).to.equal(randomNums[i]);
     }
-    expect(queue.getHead()).to.be.null;
-    expect(queue.getTail()).to.be.null;
+    expect(queue.front()).to.be.null;
+    expect(queue.back()).to.be.null;
   });
   it("should pop correct value from front", () => {
     const randomNums = genRandomNumbers();
