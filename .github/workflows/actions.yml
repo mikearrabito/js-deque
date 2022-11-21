@@ -1,9 +1,12 @@
-name: Push Action
-on: [push]
+name: Push
+on:
+  push:
+    branches:
+      - master
 jobs:
   Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: yarn test
+      - run: yarn && yarn test
