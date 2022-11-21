@@ -12,8 +12,13 @@ export class DequeImpl<T> implements Deque<T> {
 
   /**
    * Initializes Deque with given variables
-   * new Deque(1,2,3) => Deque: [1, 2, 3]
-   *
+   * @example
+   * ```ts
+   * let deque = new Deque(1,2,3);
+   * deque.toString(); // Deque: [1, 2, 3]
+   * deque = new Deque<number>();
+   * deque.toString(); // Deque: Deque is empty
+   * ```
    * @param initData values to initialize Deque with
    */
   constructor(...initData: T[]) {
