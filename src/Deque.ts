@@ -195,7 +195,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns Deque as an array
    */
   toArray() {
-    return [...this.getNodes()].map(node => node.data) as T[];
+    return [...this.getNodes()].map(node => cloneDeep(node.data)) as T[];
   }
 
   /**
