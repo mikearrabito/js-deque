@@ -26,9 +26,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    for (let i = initData.length - 1; i >= 0; i--) {
-      this.enqueue(initData[i]);
-    }
+    initData.forEach(data => this.pushBack(data));
     this._size = initData.length;
   }
 
@@ -190,15 +188,13 @@ export class DequeImpl<T> implements Deque<T> {
       return undefined;
     }
     let curIdx = 0;
-    let nodeFound: DequeNode<T> | undefined;
     for (const node of this.getNodes()) {
       if (curIdx === index) {
-        nodeFound = node;
-        break;
+        return node;
       }
       curIdx++;
     }
-    return nodeFound;
+    return undefined;
   }
 
   private getNodeByValue(value: T): {
@@ -247,7 +243,7 @@ export class DequeImpl<T> implements Deque<T> {
     // casting since we should always find node in middle of list, and
     // a node in the middle of the list will always have prev !== null
     const node = this.getNodeAtIndex(index) as DequeNode<T>;
-    let prev = node.prev as DequeNode<T>;
+    const prev = node.prev as DequeNode<T>;
 
     const newNode = new DequeNodeImpl(value);
 
@@ -276,8 +272,8 @@ export class DequeImpl<T> implements Deque<T> {
         valRemoved = this.popBack();
       } else {
         valRemoved = node.data;
-        let next = node.next;
-        let prev = node.prev;
+        const next = node.next;
+        const prev = node.prev;
         node.clear();
         (prev as DequeNode<T>).next = next;
         (next as DequeNode<T>).prev = prev;
@@ -324,7 +320,7 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Returns a representation of the deque as an array
+   * Returns a representation of the deque as an array, creates a deep copy of objects
    *
    * @returns array of values in order maintained in deque
    */
@@ -357,7 +353,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns a new instance with copied values
    */
   copy() {
-    return new DequeImpl(...this.toArray().map(v => cloneDeep(v)));
+    return new DequeImpl(...this.toArray());
   }
 
   private *getNodes(): Generator<DequeNode<T>> {
@@ -376,7 +372,7 @@ export class DequeImpl<T> implements Deque<T> {
       return "Deque: Deque is empty";
     }
 
-    while (cur != null) {
+    while (cur !== null) {
       const val = cur.data;
       if (typeof val === "object" && val !== null) {
         queueStr += "object, ";
