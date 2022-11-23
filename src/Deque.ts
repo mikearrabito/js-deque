@@ -11,7 +11,7 @@ const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 export class DequeImpl<T> implements Deque<T> {
   private head: DequeNode<T> | null = null;
   private tail: DequeNode<T> | null = null;
-  private _size: number;
+  private _size: number = 0;
 
   /**
    * Initializes Deque with given variables
@@ -26,10 +26,9 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    for (const data of initData) {
-      this.pushBack(data);
+    for (let i = 0, len = initData.length; i < len; i++) {
+      this.pushBack(initData[i]);
     }
-    this._size = initData.length;
   }
 
   /**
