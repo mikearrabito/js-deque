@@ -8,8 +8,8 @@ beforeEach(() => {
   deque = null;
 });
 
-const genRandomNumbers = () => {
-  return Array.from({ length: 10 }, () => Math.floor(Math.random() * 1000));
+const genRandomNumbers = (length = 10) => {
+  return Array.from({ length }, () => Math.floor(Math.random() * 1000));
 };
 
 const shuffle = (array: unknown[]) => {
@@ -259,7 +259,18 @@ describe("Deque Tests", function () {
     expect(deque.count(5)).to.equal(4);
   });
   this.slow(500);
-  it("handles many elements", () => {
+  it("handles creation with many elements", () => {
+    const NUM_ELEMENTS = 1_000_000;
+    const randomNums = genRandomNumbers(NUM_ELEMENTS);
+    deque = Deque.fromArray(randomNums);
+    expect(deque.size).to.equal(NUM_ELEMENTS);
+    expect(deque.toArray().length).to.equal(NUM_ELEMENTS);
+    for (let i = 0; i < NUM_ELEMENTS; i++) {
+      deque.dequeue();
+    }
+    expect(deque.size).to.equal(0);
+  });
+  it("handles enqueuing of many elements", () => {
     deque = new Deque();
     const NUM_ELEMENTS = 1_000_000;
     for (let i = 0; i < NUM_ELEMENTS; i++) {
@@ -271,6 +282,14 @@ describe("Deque Tests", function () {
       deque.dequeue();
     }
     expect(deque.size).to.equal(0);
+  });
+  it("converts to and from array", () => {
+    const randomNums = genRandomNumbers();
+    deque = new Deque(...randomNums);
+    const dequeFromArray = Deque.fromArray(deque.toArray());
+    for (let i = 0; i < randomNums.length; i++) {
+      expect(deque.get(i)).to.equal(dequeFromArray.get(i));
+    }
   });
   describe("Insert", function () {
     it("inserts at front", () => {

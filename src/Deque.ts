@@ -4,8 +4,7 @@ import isEqual from "lodash/isEqual";
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
 /**
- * Deque aka Double Ended Queue\
- * Supports LIFO and FIFO operations to use as queue or stack\
+ * Deque aka Double-ended queue\
  * O(1) get, insert, and delete for front and back elements
  */
 export class DequeImpl<T> implements Deque<T> {
@@ -18,17 +17,57 @@ export class DequeImpl<T> implements Deque<T> {
    *
    * @example
    * ```ts
-   * let deque = new Deque(1,2,3);
+   * let deque = new Deque(1, 2, 3);
    * deque.toString(); // Deque: [1, 2, 3]
    * deque = new Deque<number>();
    * deque.toString(); // Deque: Deque is empty
    * ```
+   * Calling the constructor with an array will create a
+   * Deque with a single element which is an array, if you wish
+   * to create a Deque with the elements from the array either use
+   * the spread operator(new Deque(...arr)) or use Deque.fromArray(arr)
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
     for (let i = 0, len = initData.length; i < len; i++) {
-      this.pushBack(initData[i]);
+      const newNode = new DequeNodeImpl(initData[i]);
+      newNode.prev = this.tail;
+      if (this.tail !== null) {
+        this.tail.next = newNode;
+      }
+      this.tail = newNode;
+      if (this.head === null) {
+        this.head = newNode;
+      }
+      this._size++;
     }
+  }
+
+  /**
+   * Constructs a deque from an array of elements
+   *
+   * @example
+   * ```ts
+   * const deque = Deque.fromArray([1, 2, 3]);
+   * deque.toString(); // Deque: [1, 2, 3]
+   * ```
+   * @param initData array of elements to create deque with
+   */
+  static fromArray<T extends any>(initData: T[]) {
+    const deque = new DequeImpl<T>();
+    for (let i = 0, len = initData.length; i < len; i++) {
+      const newNode = new DequeNodeImpl(initData[i]);
+      newNode.prev = deque.tail;
+      if (deque.tail !== null) {
+        deque.tail.next = newNode;
+      }
+      deque.tail = newNode;
+      if (deque.head === null) {
+        deque.head = newNode;
+      }
+      deque._size++;
+    }
+    return deque;
   }
 
   /**
@@ -367,7 +406,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns a new instance with copied values
    */
   copy() {
-    return new DequeImpl(...this.toArray());
+    return DequeImpl.fromArray(this.toArray());
   }
 
   toString() {
