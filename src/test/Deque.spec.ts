@@ -258,7 +258,7 @@ describe("Deque Tests", function () {
     expect(deque.count(4)).to.equal(0);
     expect(deque.count(5)).to.equal(4);
   });
-  this.slow(1_000);
+  this.slow(500);
   it("handles many elements", () => {
     deque = new Deque();
     const NUM_ELEMENTS = 1_000_000;
@@ -266,6 +266,7 @@ describe("Deque Tests", function () {
       deque.enqueue(Math.random());
     }
     expect(deque.size).to.equal(NUM_ELEMENTS);
+    expect(deque.toArray().length).to.equal(NUM_ELEMENTS);
     for (let i = 0; i < NUM_ELEMENTS; i++) {
       deque.dequeue();
     }

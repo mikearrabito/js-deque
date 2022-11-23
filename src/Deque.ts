@@ -11,7 +11,7 @@ const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 export class DequeImpl<T> implements Deque<T> {
   private head: DequeNode<T> | null = null;
   private tail: DequeNode<T> | null = null;
-  private _size: number = 0;
+  private _size: number;
 
   /**
    * Initializes Deque with given variables
@@ -26,7 +26,9 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    initData.forEach(data => this.pushBack(data));
+    for (const data of initData) {
+      this.pushBack(data);
+    }
     this._size = initData.length;
   }
 
@@ -188,10 +190,12 @@ export class DequeImpl<T> implements Deque<T> {
       return undefined;
     }
     let curIdx = 0;
-    for (const node of this.getNodes()) {
+    let node = this.head;
+    while (node !== null) {
       if (curIdx === index) {
         return node;
       }
+      node = node.next;
       curIdx++;
     }
     return undefined;
@@ -202,11 +206,13 @@ export class DequeImpl<T> implements Deque<T> {
     index: number;
   } {
     let index = 0;
-    for (const node of this.getNodes()) {
+    let node = this.head;
+    while (node !== null) {
       if (isEqual(node.data, value)) {
         return { node, index };
       }
       index++;
+      node = node.next;
     }
     return {
       node: undefined,
@@ -291,10 +297,12 @@ export class DequeImpl<T> implements Deque<T> {
    */
   count(value: T): number {
     let count = 0;
-    for (const node of this.getNodes()) {
+    let node = this.head;
+    while (node !== null) {
       if (isEqual(node.data, value)) {
         count++;
       }
+      node = node.next;
     }
     return count;
   }
@@ -310,7 +318,7 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Determines if given value exists
+   * Determines if given value exists in the deque
    *
    * @param val value to search for
    * @returns true if value exists
@@ -325,7 +333,14 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns array of values in order maintained in deque
    */
   toArray() {
-    return [...this.getNodes()].map(node => cloneDeep(node.data)) as T[];
+    const arr = new Array<T>(this._size);
+    let cur = this.head;
+    for (let i = 0; i < this._size; i++) {
+      const node = cur as DequeNode<T>; // cast since size > 0
+      arr[i] = cloneDeep(node.data) as T;
+      cur = cur?.next as DequeNode<T>; // will be null on last iter, but i will be == size
+    }
+    return arr;
   }
 
   /**
@@ -354,14 +369,6 @@ export class DequeImpl<T> implements Deque<T> {
    */
   copy() {
     return new DequeImpl(...this.toArray());
-  }
-
-  private *getNodes(): Generator<DequeNode<T>> {
-    let cur = this.head;
-    while (cur !== null) {
-      yield cur;
-      cur = cur.next;
-    }
   }
 
   toString() {
