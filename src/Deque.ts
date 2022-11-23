@@ -29,18 +29,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    for (let i = 0, len = initData.length; i < len; i++) {
-      const newNode = new DequeNodeImpl(initData[i]);
-      newNode.prev = this.tail;
-      if (this.tail !== null) {
-        this.tail.next = newNode;
-      }
-      this.tail = newNode;
-      if (this.head === null) {
-        this.head = newNode;
-      }
-      this._size++;
-    }
+    DequeImpl.createFromArray(initData, this);
   }
 
   /**
@@ -53,18 +42,23 @@ export class DequeImpl<T> implements Deque<T> {
    * ```
    * @param initData array of elements to create deque with
    */
-  static fromArray<T extends any>(initData: T[]) {
-    const deque = new DequeImpl<T>();
-    for (let i = 0, len = initData.length; i < len; i++) {
+  static fromArray<T extends any>(initData: T[]): DequeImpl<T> {
+    return DequeImpl.createFromArray(initData, new DequeImpl<T>());
+  }
+
+  private static createFromArray<T>(initData: T[], deque: DequeImpl<T>) {
+    const len = initData.length;
+    if (len > 0) {
+      const newNode = new DequeNodeImpl(initData[0]);
+      deque.head = newNode;
+      deque.tail = newNode;
+      deque._size++;
+    }
+    for (let i = 1; i < len; i++) {
       const newNode = new DequeNodeImpl(initData[i]);
       newNode.prev = deque.tail;
-      if (deque.tail !== null) {
-        deque.tail.next = newNode;
-      }
+      (deque.tail as DequeNode<T>).next = newNode;
       deque.tail = newNode;
-      if (deque.head === null) {
-        deque.head = newNode;
-      }
       deque._size++;
     }
     return deque;
@@ -164,11 +158,9 @@ export class DequeImpl<T> implements Deque<T> {
       return undefined;
     }
 
-    const nextNode = head.next;
-
-    if (nextNode !== null) {
-      nextNode.prev = null;
-      this.head = nextNode;
+    if (head.next !== null) {
+      head.next.prev = null;
+      this.head = head.next;
     } else {
       this.head = null;
       this.tail = null;
@@ -191,11 +183,9 @@ export class DequeImpl<T> implements Deque<T> {
       return undefined;
     }
 
-    const prevNode = tail.prev;
-
-    if (prevNode !== null) {
-      prevNode.next = null;
-      this.tail = prevNode;
+    if (tail.prev !== null) {
+      tail.prev.next = null;
+      this.tail = tail.prev;
     } else {
       this.head = null;
       this.tail = null;
@@ -215,7 +205,7 @@ export class DequeImpl<T> implements Deque<T> {
     let prev = this.head;
     while (cur !== null) {
       cur = cur.next;
-      prev?.clear();
+      (prev as DequeNode<T>).clear();
       prev = cur;
     }
     this.head = null;
@@ -376,7 +366,7 @@ export class DequeImpl<T> implements Deque<T> {
     for (let i = 0; i < this._size; i++) {
       const node = cur as DequeNode<T>; // cast since size > 0
       arr[i] = cloneDeep(node.data) as T;
-      cur = cur?.next as DequeNode<T>; // will be null on last iter, but i will be == size
+      cur = (cur as DequeNode<T>).next; // will be null on last iter, but i will be == size
     }
     return arr;
   }
