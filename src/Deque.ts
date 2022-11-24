@@ -42,7 +42,7 @@ export class DequeImpl<T> implements Deque<T> {
    * ```
    * @param initData array of elements to create deque with
    */
-  static fromArray<T extends any>(initData: T[]): DequeImpl<T> {
+  static fromArray<T>(initData: T[]): DequeImpl<T> {
     return DequeImpl.createFromArray(initData, new DequeImpl<T>());
   }
 
@@ -123,8 +123,7 @@ export class DequeImpl<T> implements Deque<T> {
     if (this.tail === null) {
       this.tail = newNode;
     }
-    this._size++;
-    return this._size;
+    return ++this._size;
   }
 
   /**
@@ -143,8 +142,7 @@ export class DequeImpl<T> implements Deque<T> {
     if (this.head === null) {
       this.head = newNode;
     }
-    this._size++;
-    return this._size;
+    return ++this._size;
   }
 
   /**
@@ -286,8 +284,7 @@ export class DequeImpl<T> implements Deque<T> {
     newNode.prev = prev;
     newNode.next = node;
 
-    this._size++;
-    return this._size;
+    return ++this._size;
   }
 
   /**
@@ -348,11 +345,11 @@ export class DequeImpl<T> implements Deque<T> {
   /**
    * Determines if given value exists in the deque
    *
-   * @param val value to search for
+   * @param value value to search for
    * @returns true if value exists
    */
-  has(val: T) {
-    return this.indexOf(val) > -1;
+  has(value: T) {
+    return this.indexOf(value) > -1;
   }
 
   /**
@@ -396,7 +393,13 @@ export class DequeImpl<T> implements Deque<T> {
    * @returns a new instance with copied values
    */
   copy() {
-    return DequeImpl.fromArray(this.toArray());
+    const copy = new DequeImpl<T>();
+    let cur = this.head;
+    while (cur !== null) {
+      copy.pushBack(cloneDeep(cur.data) as T);
+      cur = cur.next;
+    }
+    return copy;
   }
 
   toString() {
