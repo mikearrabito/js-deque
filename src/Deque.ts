@@ -424,41 +424,14 @@ export class DequeImpl<T> implements Deque<T> {
 }
 
 class DequeNodeImpl<T> implements DequeNode<T> {
-  private _prev: DequeNode<T> | null = null;
-  private _next: DequeNode<T> | null = null;
-  private _data: T | undefined;
+  prev: DequeNode<T> | null = null;
+  next: DequeNode<T> | null = null;
 
-  constructor(data: T) {
-    this._data = data;
-  }
-
-  get data() {
-    return this._data;
-  }
-
-  set data(newData: T | undefined) {
-    this._data = newData;
-  }
-
-  get prev() {
-    return this._prev;
-  }
-
-  set prev(newPrev: DequeNode<T> | null) {
-    this._prev = newPrev;
-  }
-
-  get next() {
-    return this._next;
-  }
-
-  set next(newNext: DequeNode<T> | null) {
-    this._next = newNext;
-  }
+  constructor(public data: T | undefined) {}
 
   clear() {
-    this._prev = null;
-    this._next = null;
-    this._data = undefined;
+    this.prev = null;
+    this.next = null;
+    this.data = undefined;
   }
 }
