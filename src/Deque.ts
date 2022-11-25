@@ -29,7 +29,9 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    DequeImpl.createFromArray(initData, this);
+    if (initData.length) {
+      DequeImpl.createFromArray(initData, this);
+    }
   }
 
   /**
