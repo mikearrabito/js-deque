@@ -1,6 +1,4 @@
-import { DequeImpl } from "../Deque";
-
-export interface Queue<T = any> {
+export interface Queue<T = unknown> {
   size: number;
   front: () => T | undefined;
   back: () => T | undefined;
@@ -12,7 +10,7 @@ export interface Queue<T = any> {
   indexOf: (value: T) => number;
 }
 
-export interface Deque<T = any> extends Queue<T> {
+export interface Deque<T = unknown> extends Queue<T> {
   pushBack: (data: T) => number;
   popFront: () => T | undefined;
   toArray: () => T[];
@@ -24,13 +22,9 @@ export interface Deque<T = any> extends Queue<T> {
   count: (value: T) => number;
 }
 
-export interface DequeNode<T = any> {
+export interface DequeNode<T = unknown> {
   next: DequeNode<T> | null;
   prev: DequeNode<T> | null;
   data: T | undefined;
   clear: () => void;
 }
-
-export const isDeque = <T = any>(val: unknown): val is Deque<T> => {
-  return val instanceof DequeImpl;
-};

@@ -60,7 +60,7 @@ export class DequeImpl<T> implements Deque<T> {
     for (; size < len; size++) {
       const newNode = new DequeNodeImpl(initData[size]);
       newNode.prev = deque.tail;
-      (deque.tail as DequeNode<T>).next = newNode;
+      deque.tail!.next = newNode;
       deque.tail = newNode;
     }
     deque._size = size;
@@ -206,7 +206,7 @@ export class DequeImpl<T> implements Deque<T> {
     let prev = this.head;
     while (cur !== null) {
       cur = cur.next;
-      (prev as DequeNode<T>).clear();
+      prev!.clear();
       prev = cur;
     }
     this.head = null;
@@ -277,8 +277,8 @@ export class DequeImpl<T> implements Deque<T> {
 
     // casting since we should always find node in middle of list, and
     // a node in the middle of the list will always have prev !== null
-    const node = this.getNodeAtIndex(index) as DequeNode<T>;
-    const prev = node.prev as DequeNode<T>;
+    const node = this.getNodeAtIndex(index)!;
+    const prev = node.prev!;
 
     const newNode = new DequeNodeImpl(value);
 
@@ -309,8 +309,8 @@ export class DequeImpl<T> implements Deque<T> {
         const next = node.next;
         const prev = node.prev;
         node.clear();
-        (prev as DequeNode<T>).next = next;
-        (next as DequeNode<T>).prev = prev;
+        prev!.next = next;
+        next!.prev = prev;
         this._size--;
       }
     }
@@ -362,9 +362,9 @@ export class DequeImpl<T> implements Deque<T> {
     const arr = new Array<T>(this._size);
     let cur = this.head;
     for (let i = 0; i < this._size; i++) {
-      const node = cur as DequeNode<T>; // cast since size > 0
-      arr[i] = cloneDeep(node.data) as T;
-      cur = (cur as DequeNode<T>).next; // will be null on last iter, but i will be == size
+      const node = cur!; // not null since size > 0
+      arr[i] = cloneDeep(node.data)!;
+      cur = cur!.next; // will be null on last iter, but i will be == size
     }
     return arr;
   }
@@ -395,7 +395,7 @@ export class DequeImpl<T> implements Deque<T> {
   copy() {
     const copy = new DequeImpl<T>();
     for (let cur = this.head; cur !== null; cur = cur.next) {
-      copy.pushBack(cloneDeep(cur.data) as T);
+      copy.pushBack(cloneDeep(cur.data!));
     }
     return copy;
   }
@@ -437,3 +437,7 @@ class DequeNodeImpl<T> implements DequeNode<T> {
     this.data = undefined;
   }
 }
+
+export const isDeque = <T = unknown>(val: unknown): val is Deque<T> => {
+  return val instanceof DequeImpl;
+};
