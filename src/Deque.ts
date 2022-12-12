@@ -102,12 +102,31 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * dequeues value by removing from back
+   * Dequeues value by removing from back
    *
    * @returns value at end or undefined if deque is empty
    */
   dequeue() {
     return this.popBack();
+  }
+
+  /**
+   * Pushes to the stack represented by this deque by inserting at the front
+   *
+   * @param data value to insert
+   * @returns
+   */
+  push(data: T) {
+    return this.pushFront(data);
+  }
+
+  /**
+   * Pops from the stack represented by this deque by removing from the front
+   *
+   * @returns value at the end or undefined if deque is empty
+   */
+  pop() {
+    return this.popFront();
   }
 
   /**
@@ -149,7 +168,7 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes value from front, returns undefined if empty
+   * Removes value from front and returns it, or returns undefined if deque is empty
    *
    * @returns value removed
    */
@@ -174,7 +193,7 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Removes value from end, returns undefined if empty
+   * Removes value from end and returns it, or returns undefined if deque is empty
    *
    * @returns value removed
    */
