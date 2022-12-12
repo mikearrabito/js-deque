@@ -1,3 +1,3 @@
-import { DequeImpl as Deque, isDeque } from "./Deque";
+import { DequeImpl as Deque } from "./Deque";
 
-export { Deque, isDeque };
+export { Deque };

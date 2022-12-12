@@ -360,11 +360,8 @@ export class DequeImpl<T> implements Deque<T> {
    */
   toArray() {
     const arr = new Array<T>(this._size);
-    let cur = this.head;
-    for (let i = 0; i < this._size; i++) {
-      const node = cur!; // not null since size > 0
-      arr[i] = cloneDeep(node.data)!;
-      cur = cur!.next; // will be null on last iter, but i will be == size
+    for (let cur = this.head, i = 0; cur !== null; cur = cur.next, i++) {
+      arr[i] = cloneDeep(cur.data)!;
     }
     return arr;
   }
@@ -376,7 +373,7 @@ export class DequeImpl<T> implements Deque<T> {
     const oldHead = this.head;
     let prev: DequeNode<T> | null = null;
     for (let cur = this.head; cur !== null; ) {
-      let next = cur.next;
+      const next = cur.next;
       cur.next = cur.prev;
       cur.prev = next;
       prev = cur;
@@ -437,7 +434,3 @@ class DequeNodeImpl<T> implements DequeNode<T> {
     this.data = undefined;
   }
 }
-
-export const isDeque = <T = unknown>(val: unknown): val is Deque<T> => {
-  return val instanceof DequeImpl;
-};
