@@ -10,7 +10,7 @@ const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 export class DequeImpl<T> implements Deque<T> {
   private head: DequeNode<T> | null = null;
   private tail: DequeNode<T> | null = null;
-  private _size: number = 0;
+  private _size = 0;
 
   /**
    * Initializes Deque with given variables
@@ -75,18 +75,14 @@ export class DequeImpl<T> implements Deque<T> {
   }
 
   /**
-   * Returns value at the front, or undefined if none exists
-   *
-   * @returns value at front
+   * @returns value at front, or undefined if deque is empty
    */
   front() {
     return this.head?.data ?? undefined;
   }
 
   /**
-   * Returns value at the back, or undefined if none exists
-   *
-   * @returns value at back
+   * @returns value at back, or undefined if deque is empty
    */
   back() {
     return this.tail?.data ?? undefined;
@@ -96,6 +92,7 @@ export class DequeImpl<T> implements Deque<T> {
    * Enqueues value by inserting at front
    *
    * @param data value to insert
+   * @returns size after insertion
    */
   enqueue(data: T) {
     return this.pushFront(data);
@@ -104,7 +101,7 @@ export class DequeImpl<T> implements Deque<T> {
   /**
    * Dequeues value by removing from back
    *
-   * @returns value at end or undefined if deque is empty
+   * @returns value at back or undefined if deque is empty
    */
   dequeue() {
     return this.popBack();
@@ -114,7 +111,7 @@ export class DequeImpl<T> implements Deque<T> {
    * Pushes to the stack represented by this deque by inserting at the front
    *
    * @param data value to insert
-   * @returns
+   * @returns size after insertion
    */
   push(data: T) {
     return this.pushFront(data);
@@ -123,7 +120,7 @@ export class DequeImpl<T> implements Deque<T> {
   /**
    * Pops from the stack represented by this deque by removing from the front
    *
-   * @returns value at the end or undefined if deque is empty
+   * @returns value at front or undefined if deque is empty
    */
   pop() {
     return this.popFront();
