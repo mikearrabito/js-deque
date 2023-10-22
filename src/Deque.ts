@@ -291,8 +291,8 @@ export class DequeImpl<T> implements Deque<T> {
       return this.pushBack(value);
     }
 
-    // casting since we should always find node in middle of list, and
-    // a node in the middle of the list will always have prev !== null
+    // asserting non null since we should always find node in middle of list,
+    // and a node in the middle of the list will always have prev !== null
     const node = this.getNodeAtIndex(index)!;
     const prev = node.prev!;
 
