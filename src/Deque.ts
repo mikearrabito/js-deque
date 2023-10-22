@@ -423,14 +423,19 @@ export class DequeImpl<T> implements Deque<T> {
 
     for (; cur !== null; cur = cur.next) {
       const val = cur.data;
-      if (typeof val === "object" && val !== null) {
-        queueStr += "object, ";
+      if (Array.isArray(val)) {
+        queueStr += val.length ? "[...]" : "[]";
+      } else if (typeof val === "object" && val !== null) {
+        queueStr += Object.keys(val).length ? "{...}" : "{}";
       } else {
-        queueStr += String(val) + ", ";
+        queueStr += String(val);
+      }
+      if (cur.next) {
+        queueStr += ", ";
       }
     }
 
-    return queueStr.substring(0, queueStr.length - 2) + " ]";
+    return queueStr + " ]";
   }
 
   [customInspectSymbol]() {
