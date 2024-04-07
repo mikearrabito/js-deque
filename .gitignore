@@ -1,3 +1,8 @@
 node_modules
 lib
 .nyc_output
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*

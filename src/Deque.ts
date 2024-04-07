@@ -1,6 +1,7 @@
-import { Deque, DequeNode } from "./types/Deque";
+import type { Deque, DequeNode } from "./types/Deque";
 import cloneDeep from "lodash/cloneDeep";
 import isEqual from "lodash/isEqual";
+
 const customInspectSymbol = Symbol.for("nodejs.util.inspect.custom");
 
 /**
@@ -29,9 +30,7 @@ export class DequeImpl<T> implements Deque<T> {
    * @param initData values to initialize the deque with
    */
   constructor(...initData: T[]) {
-    if (initData.length) {
-      DequeImpl.createFromArray(initData, this);
-    }
+    DequeImpl.createFromArray(initData, this);
   }
 
   /**
@@ -234,39 +233,56 @@ export class DequeImpl<T> implements Deque<T> {
     if (index >= this.size || index < 0) {
       return undefined;
     }
-    for (
-      let node = this.head, curIdx = 0;
-      node !== null;
-      node = node.next, curIdx++
-    ) {
-      if (curIdx === index) {
-        return node;
+
+    let reverseSearch = false;
+    if (index > this.size / 2) {
+      // if index is beyond halfway point, start search from the back
+      reverseSearch = true;
+    }
+
+    if (reverseSearch) {
+      for (
+        let node = this.tail, curIdx = this.size - 1;
+        node !== null;
+        node = node.prev, curIdx--
+      ) {
+        if (curIdx === index) {
+          return node;
+        }
+      }
+    } else {
+      for (
+        let node = this.head, curIdx = 0;
+        node !== null;
+        node = node.next, curIdx++
+      ) {
+        if (curIdx === index) {
+          return node;
+        }
       }
     }
+
     return undefined;
   }
 
-  private getNodeByValue(value: T): {
-    node: DequeNode<T> | undefined;
-    index: number;
-  } {
+  private getNodeByValue(value: T, isEqualFn: (val: T, other: T) => boolean) {
     for (
       let node = this.head, index = 0;
       node !== null;
       node = node.next, index++
     ) {
-      if (isEqual(node.data, value)) {
+      if (isEqualFn(node.data!, value)) {
         return { node, index };
       }
     }
     return {
       node: undefined,
       index: -1,
-    };
+    } as const;
   }
 
   /**
-   * Finds and returns value at given index
+   * Finds and returns value at given 0-based index
    *
    * @param index of item to retrieve
    * @returns item at index given, or undefined if invalid index given
@@ -310,10 +326,11 @@ export class DequeImpl<T> implements Deque<T> {
    * Removes first occurance of a value
    *
    * @param value value to remove
+   * @param [isEqualFn=isEqual] optional custom equality function, defaults to Lodash's isEqual
    * @returns value removed, or undefined if value not found
    */
-  remove(value: T) {
-    const { node } = this.getNodeByValue(value);
+  remove(value: T, isEqualFn: (val: T, other: T) => boolean = isEqual) {
+    const { node } = this.getNodeByValue(value, isEqualFn);
     let valRemoved: T | undefined;
     if (node !== undefined) {
       if (node === this.head) {
@@ -337,12 +354,13 @@ export class DequeImpl<T> implements Deque<T> {
    * Counts number of elements that equal to the value given
    *
    * @param value value to search for
+   * @param [isEqualFn=isEqual] optional custom equality function, defaults to Lodash's isEqual
    * @returns number of occurances of value in the deque
    */
-  count(value: T): number {
+  count(value: T, isEqualFn: (val: T, other: T) => boolean = isEqual): number {
     let count = 0;
     for (let node = this.head; node !== null; node = node.next) {
-      if (isEqual(node.data, value)) {
+      if (isEqualFn(node.data!, value)) {
         count++;
       }
     }
@@ -353,31 +371,36 @@ export class DequeImpl<T> implements Deque<T> {
    * Searches for a value and returns the first found index, or -1 if not found
    *
    * @param value value to search for
+   * @param [isEqualFn=isEqual] optional custom equality function, defaults to Lodash's isEqual
    * @returns index of value in the deque or -1 if not found
    */
-  indexOf(value: T): number {
-    return this.getNodeByValue(value).index;
+  indexOf(
+    value: T,
+    isEqualFn: (val: T, other: T) => boolean = isEqual
+  ): number {
+    return this.getNodeByValue(value, isEqualFn).index;
   }
 
   /**
    * Determines if given value exists in the deque
    *
    * @param value value to search for
-   * @returns true if value exists
+   * @returns if the value exists in the deque
    */
   has(value: T) {
     return this.indexOf(value) > -1;
   }
 
   /**
-   * Returns a representation of the deque as an array, creates a deep copy of objects
+   * Returns a representation of the deque as an array, creates a copy of objects
    *
+   * @param [cloneFn=cloneDeep] optional function to use for cloning each node, defaults to Lodash's cloneDeep
    * @returns array of values in order maintained in deque
    */
-  toArray() {
-    const arr = new Array<T>(this._size);
+  toArray(cloneFn = cloneDeep) {
+    const arr = Array.from<T>({ length: this._size });
     for (let cur = this.head, i = 0; cur !== null; cur = cur.next, i++) {
-      arr[i] = cloneDeep(cur.data)!;
+      arr[i] = cloneFn(cur.data)!;
     }
     return arr;
   }
@@ -403,12 +426,13 @@ export class DequeImpl<T> implements Deque<T> {
   /**
    * Creates a copy of the deque maintaining order of values, creates a deep copy of objects
    *
-   * @returns a new instance with copied values
+   * @param [cloneFn=cloneDeep] optional function to use for cloning each node, defaults to lodash's cloneDeep
+   * @returns a new deque instance with copied values
    */
-  copy() {
+  copy(cloneFn = cloneDeep) {
     const copy = new DequeImpl<T>();
     for (let cur = this.head; cur !== null; cur = cur.next) {
-      copy.pushBack(cloneDeep(cur.data!));
+      copy.pushBack(cloneFn(cur.data!));
     }
     return copy;
   }

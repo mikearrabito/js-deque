@@ -12,6 +12,7 @@ export interface Deque<T = unknown> {
   pop: () => T | undefined;
   clear: () => void;
   indexOf: (value: T) => number;
+  has: (value: T) => boolean;
   get: (index: number) => T | undefined;
   insert: (index: number, value: T) => number;
   remove: (value: T) => T | undefined;

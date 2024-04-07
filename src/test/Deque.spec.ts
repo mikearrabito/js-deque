@@ -23,6 +23,7 @@ describe("Deque Tests", function () {
   it("should initialize an empty Deque", () => {
     deque = new Deque();
     expect(deque).to.not.be.null;
+    expect(deque.size).to.equal(0);
   });
   it("should initialize deque with list of elements", () => {
     deque = new Deque(...genRandomNumbers());
