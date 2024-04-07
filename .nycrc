@@ -1,1 +1,1 @@
-{ "exclude": ["**/*.spec.*"] }
+{ "exclude": ["**/*.spec.*", ".yarn/*"] }
