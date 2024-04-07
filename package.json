@@ -1,6 +1,6 @@
 {
   "name": "js-deque",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Deque implementation in Typescript/Javascript",
   "main": "./lib/index.js",
   "author": "Michael Arrabito",
