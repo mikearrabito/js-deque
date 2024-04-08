@@ -34,6 +34,8 @@ interface Deque<T = unknown> {
 # Example Usage
 
 ```ts
+import { Deque } from 'js-deque';
+
 const values = [1, 2, 3];
 let deque = new Deque(...values); // deque node element type will be inferred from array's member type
 // or
