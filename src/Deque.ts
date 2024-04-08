@@ -233,12 +233,9 @@ export class DequeImpl<T> implements Deque<T> {
     if (index >= this.size || index < 0) {
       return undefined;
     }
-
-    let reverseSearch = false;
-    if (index > this.size / 2) {
-      // if index is beyond halfway point, start search from the back
-      reverseSearch = true;
-    }
+    
+    // if index is beyond halfway point, start search from the back
+    const reverseSearch = index > this.size / 2;
 
     if (reverseSearch) {
       for (
